@@ -14,7 +14,7 @@ import java.util.Properties;
 @Configuration
 public class KaptchaConfig {
     @Bean
-    Producer kaptchProducer(){
+    public Producer kaptchProducer(){
         Properties properties = new Properties();
         properties.setProperty("kaptcha.image.width","100");
         properties.setProperty("kaptcha.image.height","40");
