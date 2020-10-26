@@ -33,6 +33,7 @@ public class MessageController {
 
     @GetMapping("/letter/list")
     public String getLetterList(Model model, Page page){
+
         User user = hostHolder.getUser();
 
         //分页信息
