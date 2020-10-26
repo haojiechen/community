@@ -5,6 +5,7 @@ import com.nowcoder.community.Service.UserService;
 import com.nowcoder.community.entity.Message;
 import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author chen
@@ -83,6 +83,11 @@ public class MessageController {
         }
         model.addAttribute("letters",letters);
         model.addAttribute("target",getLetterTarget(conversationId));
+
+        List<Integer> ids = getLetterUnreadIds(letterList);
+        if (!ids.isEmpty()){
+            messageService.readMessages(ids);
+        }
         return "/site/letter-detail";
     }
 
@@ -96,5 +101,38 @@ public class MessageController {
         {
             return userService.findUserById(id0);
         }
+    }
+    private List<Integer> getLetterUnreadIds(List<Message> letterList){
+        List<Integer> res = new ArrayList<>();
+        if (letterList!=null){
+            for (Message letter : letterList){
+                if (hostHolder.getUser().getId() == letter.getToId() && letter.getStatus()==0){
+                    res.add(letter.getId());
+                }
+            }
+        }
+        return res;
+    }
+
+    @PostMapping("/letter/send")
+    @ResponseBody
+    public String sendLetter(String toName, String content){
+        User target =  userService.findUserByName(toName);
+        if (target == null){
+            return CommunityUtil.getJSONString(1,"目标用户不存在！");
+        }
+        Message message = new Message();
+        message.setFromId(hostHolder.getUser().getId());
+        message.setToId(target.getId());
+        if (message.getFromId() < message.getToId()){
+            message.setConversationId(message.getFromId()+"_"+message.getToId());
+        }else{
+            message.setConversationId(message.getToId()+"_"+message.getFromId());
+        }
+        message.setContent(content);
+        message.setCreateTime(new Date());
+        messageService.addMessage(message);
+
+        return CommunityUtil.getJSONString(0);
     }
 }

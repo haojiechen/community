@@ -48,4 +48,18 @@ public interface MessageMapper {
      */
     int selectLetterUnreadCount(int userId,String conversationId);
 
+    /**
+     * 新增一条消息
+     * @param message 消息
+     * @return 新增行数
+     */
+    int insertMessage(Message message);
+
+    /**
+     * 修改消息状态
+     * @param ids 消息id列表
+     * @param status 状态
+     * @return
+     */
+    int updateStatus(List<Integer> ids,int status);
 }
