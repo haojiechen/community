@@ -13,10 +13,10 @@ import javax.servlet.http.HttpServletResponse;
  * @author chen
  */
 @Component
+
 public class AlphaInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(AlphaInterceptor.class);
-
     /**
      * 在请求之前执行
      * @param request
@@ -30,7 +30,6 @@ public class AlphaInterceptor implements HandlerInterceptor {
         logger.debug("preHandle:"+handler.toString());
         return true;
     }
-
     /**
      * 在Controller之后执行
      * @param request
@@ -43,7 +42,6 @@ public class AlphaInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         logger.debug("postHandel: "+handler.toString());
     }
-
     /**
      * 在模板引擎之后执行
      * @param request

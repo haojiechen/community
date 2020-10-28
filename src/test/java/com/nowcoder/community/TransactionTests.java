@@ -1,6 +1,6 @@
 package com.nowcoder.community;
 
-import com.nowcoder.community.Service.AlphaService;
+import com.nowcoder.community.service.AlphaService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

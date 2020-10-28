@@ -1,7 +1,7 @@
 package com.nowcoder.community.controller;
 
-import com.nowcoder.community.Service.DiscussPostService;
-import com.nowcoder.community.Service.UserService;
+import com.nowcoder.community.service.DiscussPostService;
+import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
