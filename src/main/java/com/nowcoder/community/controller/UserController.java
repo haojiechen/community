@@ -1,5 +1,6 @@
 package com.nowcoder.community.controller;
 
+import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.entity.User;
@@ -30,8 +31,6 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-
-
     @Value("${community.path.upload}")
     private String uploadPath;
 
@@ -46,6 +45,8 @@ public class UserController {
 
     @Autowired
     private HostHolder hostHolder;
+    @Autowired
+    private LikeService likeService;
 
     @LoginRequired
     @GetMapping("/setting")
@@ -112,5 +113,17 @@ public class UserController {
         }
         model.addAttribute("pwdError","您输入的密码不正确！");
         return "/site/setting";
+    }
+
+    //个人主页
+    @GetMapping("/profile/{userId}")
+    public String getProfilePage(@PathVariable int userId,Model model){
+        User user = userService.findUserById(userId);
+        if (user ==null){
+            throw  new RuntimeException("该用户不存在！");
+        }
+        model.addAttribute("user",user);
+        model.addAttribute("LikeCount",likeService.findUserLikeCount(userId));
+        return "/site/profile";
     }
 }
