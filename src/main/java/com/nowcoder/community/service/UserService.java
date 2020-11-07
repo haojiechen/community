@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author chen
@@ -50,7 +51,16 @@ public class UserService implements CommunityConstant {
     private String contextPath;
 
     public User findUserById(int id){
-        return userMapper.selectById(id);
+        //先从缓存中拿数据
+        String userKey = RedisKeyUtil.getUserKey(id);
+        User user = (User) redisTemplate.opsForValue().get(userKey);
+
+        //缓存中找不到
+        if (user == null){
+            user = userMapper.selectById(id);
+            redisTemplate.opsForValue().set(userKey,user,3600, TimeUnit.SECONDS);
+        }
+        return user;
     }
 
     public Map<String,Object> register(User user){
@@ -112,7 +122,10 @@ public class UserService implements CommunityConstant {
             return ACTIVATION_REPEAT;
         }else if(user.getActivationCode().equals(code))
         {
+            String userKey = RedisKeyUtil.getUserKey(userId);
+            redisTemplate.delete(userKey);
             userMapper.updateStatus(userId,1);
+
             return ACTIVATION_SUCCESS;
         }else{
             return ACTIVATION_FAILURE;
@@ -173,10 +186,14 @@ public class UserService implements CommunityConstant {
     }
 
     public int updateHeader(int userId,String headerUrl){
+        String userKey = RedisKeyUtil.getUserKey(userId);
+        redisTemplate.delete(userKey);
         return userMapper.updateHeader(userId,headerUrl);
     }
 
     public int updatePassword(int userId,String pwd){
+        String userKey = RedisKeyUtil.getUserKey(userId);
+        redisTemplate.delete(userKey);
         pwd = CommunityUtil.md5(pwd + userMapper.selectById(userId).getSalt());
         return userMapper.updatePassword(userId,pwd);
     }
