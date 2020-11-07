@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.*;
  * @author chen
  */
 @Mapper
+@Deprecated
 public interface LoginTicketMapper {
 
     @Insert({
