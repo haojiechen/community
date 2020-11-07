@@ -9,6 +9,7 @@ public class RedisKeyUtil {
     private static final String PREFIX_USER_LIKE = "like:user";
     private static final String PREFIX_FOLLOWEE = "followee";
     private static final String PREFIX_FOLLOWER = "follower";
+    private static final String PREFIX_KAPTCHA = "kaptcha";
 
     /**
      * 生成某个实体赞的key
@@ -44,5 +45,9 @@ public class RedisKeyUtil {
      */
     public static String getFollowerKey(int entityId,int entityType){
         return PREFIX_FOLLOWER+SPLIT+entityId+SPLIT+entityType;
+    }
+
+    public static String getKaptchaKey(String owner){
+        return PREFIX_KAPTCHA + SPLIT + owner;
     }
 }
